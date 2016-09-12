@@ -1,7 +1,7 @@
 # Sketchy Pies
 A Sketch plugin to magically convert Circle layers into pie charts!
 
-## Instal the plugin  
+## Install the plugin  
 [Download](https://github.com/abynim/sketchy-pies/archive/master.zip) and extract the contents of this repository. Then double-click the `Sketchy Pies.sketchplugin` bundle to install the plugin. Remember, this will only work if you have Sketch updated to version 3.3 or above.  
 
 ## Usage
