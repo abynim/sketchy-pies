@@ -2,7 +2,7 @@
   "author" : "Aby Nimbalkar",
   "commands" : [
     {
-      "script" : "script.cocoascript",
+      "script" : "script.js",
       "handler" : "onRun",
       "shortcut" : "",
       "name" : "Convert to Pie Chart",
@@ -15,9 +15,9 @@
     ],
     "title" : "Sketchy Pies"
   },
-  "identifier" : "com.silverux.sketchplugins.sketchypies",
-  "version" : "1.0",
+  "identifier" : "com.abynim.sketchplugins.sketchypies",
+  "version" : "1.1",
   "description" : "Draw pie charts",
-  "authorEmail" : "aby@silverux.com",
+  "authorEmail" : "abynimbalkar@gmail.com",
   "name" : "Sketchy Pies"
 }
