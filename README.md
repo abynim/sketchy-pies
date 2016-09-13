@@ -13,12 +13,20 @@ __Draw__ and __select__ a Circle on the canvas or in an artboard.
 Run the plugin from the menu `Plugins` > `Sketchy Pies` > `Convert to Pie Chart`.  
 
 Enter color values for each slice in the Pie Chart, separated by commas.  
-![Enter Color Values](http://abynim.com/plugins/sketchypies/enter_color_values.jpg?raw=true)  
+![Enter Color Values](http://abynim.com/plugins/sketchypies/enter_color_values.jpg?raw=true)
 
-Behold, your Pie Chart is ready!  
-![Pie is ready](http://abynim.com/plugins/sketchypies/pie_ready.jpg?raw=true)  
+This will create a Pie Chart with equal slices based on the number of color values you added.  
+![Pie is ready](http://abynim.com/plugins/sketchypies/pie_ready.jpg?raw=true)    
 
-## Editing pie charts
+Optionally, you can also specify percent values along with the relative color values. For example, `#FF0000:0.5, #0000FF:50%`.  
+![Enter Color and Percent Values](http://abynim.com/plugins/sketchypies/enter_color_percent_values.jpg?raw=true) 
+
+This will create a Pie Chart with variable slices based on the percent values and their associated colors.  
+![Percent Pie is ready](http://abynim.com/plugins/sketchypies/percent_pie_ready.jpg?raw=true)  
+
+---
+
+## Editing pie colors
 Each slice of pie will be a separate layer, in case you need to change the colors later.  
 ![Enter Color Values](http://abynim.com/plugins/sketchypies/pie_layers.jpg?raw=true)  
 

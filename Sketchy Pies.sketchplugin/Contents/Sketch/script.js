@@ -4,48 +4,99 @@ var onRun = function(context) {
   
 	var selection = context.selection
 	if(selection.count() == 0) {
-		var app = NSApplication.sharedApplication();
-    		app.displayDialog_withTitle("Draw a circle on the canvas, select it, then run the plugin again.", "Select a circle!")
+		NSApplication.sharedApplication().displayDialog_withTitle("Draw a circle on the canvas, select it, then run the plugin again.", "Select a circle!")
 		return
 	}
 
+	var layer = selection.firstObject(),
+		diameter = layer.frame().width();
+	if (layer.className() != "MSShapeGroup" || diameter != layer.frame().height()) {
+		NSApplication.sharedApplication().displayDialog_withTitle("This only works when you have a Circle Shape layer selected. Width and Height must be equal.", "Select a circle!");
+		return
+	};
+	
 	var doc = context.document,
-	sliceColorsString = doc.askForUserInput_initialValue("Enter color values for pie slices.", "#161032,#FAFF81,#FFC53A,#E06D06,#B26700");
+	identifier = context.command.identifier(),
+	defaultValues = identifier == "convertToPieChartWithPercent" ? "#161032:20%, #FAFF81:0.2, #FFC53A:40%, #E06D06:.1, #B26700:10%" : "#161032,#FAFF81,#FFC53A,#E06D06,#B26700",
+	infoText = identifier == "convertToPieChartWithPercent" ? "Enter #hex:percentage values for pie slices." : "Enter #hex values for pie slices.",
+	sliceColorsString = doc.askForUserInput_initialValue(infoText, defaultValues);
 	if(sliceColorsString == nil) return
 
+	sliceColorsString = sliceColorsString.stringByReplacingOccurrencesOfString_withString(" ", "").stringByReplacingOccurrencesOfString_withString("(", "").stringByReplacingOccurrencesOfString_withString(")", "")
 	sketchVersion = getSketchVersionNumber();
 
-	var layer = selection.firstObject(),
-	sliceColors = sliceColorsString.split(","),
+	var sliceColors = sliceColorsString.split(","),
 	numSlices = sliceColors.length,
-	diameter = layer.frame().width(),
-	dash = diameter*22/7/numSlices,
-	gap = diameter*5,
-	rotateBy = 360/numSlices,
 	allLayers = [layer],
-	slice, borders, border, color;
+	dash, gap, rotateBy, slice, borders, border, color, firstValue;
 
+ 	firstValue = sliceColors[0];
+	if(firstValue.split(":").length == 2) {
+		// colors and %
+		rotateBy = 0;
+		var sliceValues, sliceValueString, sliceValue;
+
+		for(var i = 0; i<numSlices; i++) {
+			sliceValues = sliceColors[i].split(":");
+			color = MSColor.colorWithSVGString(sliceValues[0]);
+			sliceValueString = sliceValues[1];
+			sliceValue = parseFloat(sliceValueString);
+			if (sliceValueString.endsWith("%")) {
+				sliceValue /= 100;
+			};
+			slice = layer.duplicate();
+			disableFills(slice);
+			if (sketchVersion >= 380) {
+				border = slice.style().addStylePartOfType(1);
+			} else {
+				borders = slice.style().borders();
+				borders.addNewStylePart();
+				border = slice.style().border();
+			}
+			border.setColor(color);
+			border.setPosition(1); //inside
+			border.setThickness(diameter/2);
+
+			dash = diameter*22/7*sliceValue;
+			gap = diameter*5;
+
+			slice.style().borderOptions().setDashPattern([dash, gap])
+			slice.setRotation(rotateBy)
+			rotateBy += 360*sliceValue;
+
+			slice.setName(sliceColors[i])
+			allLayers.push(slice);
+		}
+
+	} else {
+		// colors only
+		dash = diameter*22/7/numSlices;
+		gap = diameter*5;
+		rotateBy = 360/numSlices;
+
+		for(var i = 0; i<numSlices; i++) {
+			color = MSColor.colorWithSVGString(sliceColors[i]);
+			slice = layer.duplicate();
+			disableFills(slice);
+			if (sketchVersion >= 380) {
+				border = slice.style().addStylePartOfType(1);
+			} else {
+				borders = slice.style().borders();
+				borders.addNewStylePart();
+				border = slice.style().border();
+			}
+			border.setColor(color);
+			border.setPosition(1); //inside
+			border.setThickness(diameter/2);
+			slice.style().borderOptions().setDashPattern([dash, gap])
+			slice.setRotation(rotateBy*i)
+			slice.setName(sliceColors[i])
+			allLayers.push(slice);
+		}
+	}
 	disableFills(layer);
 
-	for(var i = 0; i<numSlices; i++) {
-		color = hexToColor(sliceColors[i])
-		slice = layer.duplicate()
-		disableFills(slice);
-		if (sketchVersion >= 380) {
-			border = slice.style().addStylePartOfType(1);
-		} else {
-			borders = slice.style().borders();
-			borders.addNewStylePart();
-			border = slice.style().border();
-		}
-		border.setColor(MSColor.colorWithNSColor(color));
-		border.setPosition(1); //inside
-		border.setThickness(diameter/2);
-		slice.style().borderOptions().setDashPattern([dash, gap])
-		slice.setRotation(rotateBy*i)
-		slice.setName(sliceColors[i])
-		allLayers.push(slice);
-	}
+	
 
 	layer.setHasClippingMask(1);
 	var layers = MSLayerArray.arrayWithLayers(allLayers);
@@ -60,15 +111,6 @@ var disableFills = function(aLayer) {
 	while(existingFill = loop.nextObject()) {
 		existingFill.setIsEnabled(false)
 	}
-}
-
-var hexToColor = function(hex, alpha) {
-	var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex),
-		red = parseInt(result[1], 16) / 255,
-		green = parseInt(result[2], 16) / 255,
-		blue = parseInt(result[3], 16) / 255,
-		alpha = (typeof alpha !== 'undefined') ? alpha : 1;
-	return NSColor.colorWithCalibratedRed_green_blue_alpha(red, green, blue, alpha);
 }
 
 var getSketchVersionNumber = function() {
