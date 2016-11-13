@@ -38,7 +38,7 @@ var onRun = function(context) {
 
 		for(var i = 0; i<numSlices; i++) {
 			sliceValues = sliceColors[i].split(":");
-			color = MSColor.colorWithSVGString(sliceValues[0]);
+			color = MSImmutableColor.colorWithSVGString(sliceValues[0]).newMutableCounterpart();
 			sliceValueString = sliceValues[1];
 			sliceValue = parseFloat(sliceValueString);
 			if (sliceValueString.endsWith("%")) {
@@ -75,7 +75,7 @@ var onRun = function(context) {
 		rotateBy = 360/numSlices;
 
 		for(var i = 0; i<numSlices; i++) {
-			color = MSColor.colorWithSVGString(sliceColors[i]);
+			color = MSImmutableColor.colorWithSVGString(sliceColors[i]).newMutableCounterpart();
 			slice = layer.duplicate();
 			disableFills(slice);
 			if (sketchVersion >= 380) {
