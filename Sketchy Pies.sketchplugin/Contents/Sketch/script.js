@@ -10,7 +10,7 @@ var onRun = function(context) {
 
 	var layer = selection.firstObject(),
 		diameter = layer.frame().width();
-	if (layer.className() != "MSShapeGroup" || diameter != layer.frame().height()) {
+	if (layer.className() != "MSOvalShape" || diameter != layer.frame().height()) {
 		NSApplication.sharedApplication().displayDialog_withTitle("This only works when you have a Circle Shape layer selected. Width and Height must be equal.", "Select a circle!");
 		return
 	};
