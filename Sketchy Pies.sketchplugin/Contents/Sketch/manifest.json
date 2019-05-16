@@ -27,5 +27,6 @@
   "version" : "1.1",
   "description" : "Draw pie charts",
   "authorEmail" : "abynimbalkar@gmail.com",
-  "name" : "Sketchy Pies"
+  "name" : "Sketchy Pies",
+  "appcast": "https://raw.githubusercontent.com/abynim/sketchy-pies/master/appcast.xml"
 }
